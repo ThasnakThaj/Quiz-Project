@@ -3,7 +3,6 @@
 {% block title %} Trojan Quiz {% endblock title %}
 
 {% block content %}
-
 <div class="page-header align-items-start min-vh-100" style="background-image: url('https://th.bing.com/th/id/R.fa856ad9600b4444dd7a9bacc86d5e31?rik=uR%2ff5K2pVRDwfA&riu=http%3a%2f%2fwww.9to5carwallpapers.com%2fwp-content%2fuploads%2f2017%2f07%2fIndian-Independence-Day-Images-hd-Wallpapers.jpg&ehk=RmOEfe2keFYe8%2fnQ5OY10Eoa2g10u%2fUmShWvVym4OTo%3d&risl=&pid=ImgRaw&r=0');" loading="lazy">
   <span class="mask bg-gradient-dark opacity-6"></span>
   <div class="container my-auto">
@@ -33,7 +32,62 @@
                   </div>
                 </div>
               </div>
-              <script>
+              <div class="col-md-12">
+                <div class="input-group input-group-outline my-3">
+                  <label class="form-label">Company</label>
+                  <input type="text" class="form-control" name="company" required>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="input-group input-group-outline my-3">
+                  {% comment %} <label class="form-label" for="type">Type</label> {% endcomment %}
+                  <select class="form-control" name="type" id="type" required>
+                    <label><option class="form-label" for="" disabled selected>You are</option></label>
+                    <option value="Architect">Architect</option>
+                    <option value="Carpenter">Carpender</option>
+                    <option value="Dealer">Dealer</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="input-group input-group-outline my-3">
+                  {% comment %} <label class="form-label">State</label> {% endcomment %}
+                  <select class="form-control" name="state" id="state" required>
+                    <option value="" disabled selected>Select State</option>
+                    {% for state in states %}
+                      <option value="{{ state }}">{{ state }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="input-group input-group-outline my-3">
+                  {% comment %} <label class="form-label">District</label> {% endcomment %}
+                  <select class="form-control" name="district" id="district" required>
+                    <option value="" disabled selected>Select District</option>
+                  </select>
+                </div>
+              </div>
+              <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
+                $(document).ready(function() {
+                  // Function to update districts based on selected state
+                  $('#state').change(function() {
+                    var state = $(this).val();
+                    var districts = {{ districts|safe }};
+                    
+                    // Clear previous options
+                    $('#district').empty().append('<option value="" disabled selected>Select District</option>');
+                    
+                    // Add options for selected state
+                    if (state && districts[state]) {
+                      districts[state].forEach(function(district) {
+                        $('#district').append('<option value="' + district + '">' + district + '</option>');
+                      });
+                    }
+                  });
+                });
                 document.getElementById('phone').addEventListener('input', function (e) {
                     const input = e.target;
                     const value = input.value;

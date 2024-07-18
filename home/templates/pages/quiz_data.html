@@ -4,6 +4,13 @@
 
 {% block content %}
 
+<div id="loading-spinner" class="loading-spinner" style="display: none;">
+  <!-- Bootstrap spinner -->
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
 <div class="page-header align-items-start min-vh-100" style="background-image: url('https://th.bing.com/th/id/R.fa856ad9600b4444dd7a9bacc86d5e31?rik=uR%2ff5K2pVRDwfA&riu=http%3a%2f%2fwww.9to5carwallpapers.com%2fwp-content%2fuploads%2f2017%2f07%2fIndian-Independence-Day-Images-hd-Wallpapers.jpg&ehk=RmOEfe2keFYe8%2fnQ5OY10Eoa2g10u%2fUmShWvVym4OTo%3d&risl=&pid=ImgRaw&r=0');" loading="lazy">
   <span class="mask bg-gradient-dark opacity-6"></span>
   <div class="container my-auto">
@@ -40,7 +47,10 @@
                 {% endfor %}
               </div>
               <div class="text-center mt-4">
-                <button type="submit" class="btn bg-gradient-primary w-100" style="background-color: #8ED3F4 !important;">Next Question</button>
+                <button type="submit" class="btn bg-gradient-primary w-100" style="background-color: #8ED3F4 !important;">
+                  <span id="button-text">Next Question</span>
+                  <span id="button-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                </button>
               </div>
             </form>
           </div>
@@ -49,5 +59,22 @@
     </div>
   </div>
 </div>
+<script>
+  {% comment %} function submitWithDelay() {
+    document.getElementById('button-text').style.display = 'none';
+    document.getElementById('button-spinner').style.display = 'inline-block';
+    setTimeout(function() {
+      document.getElementById('quiz-form').submit();
+    }, 20000); // 5 seconds delay
+  } {% endcomment %}
+  function showSpinner() {
+    document.getElementById('button-text').style.display = 'none';
+    document.getElementById('button-spinner').style.display = 'inline-block';
+  }
 
+  window.onload = function() {
+    document.getElementById('button-spinner').style.display = 'none';
+    document.getElementById('button-text').style.display = 'inline';
+  };
+</script>
 {% endblock content %}

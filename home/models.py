@@ -6,6 +6,12 @@ class User(models.Model):
     name = models.CharField(max_length=250)
     phone_number = models.BigIntegerField()
     start_time = models.DateTimeField(blank=True, null=True)
+    company = models.CharField(max_length=250)
+    type = models.CharField(max_length=50)
+    district = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    ip_address = models.CharField(max_length=50, blank=True, null=True)
+
 
     def __str__(self):
         return self.name
@@ -49,7 +55,12 @@ class QuizzExam(models.Model):
 class Results(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_name = models.CharField(max_length=200)
+    ip_address = models.CharField(max_length=50, blank=True, null=True)
     user_phone = models.BigIntegerField()
+    user_company = models.CharField(max_length=200)
+    user_type = models.CharField(max_length=200)
+    user_district = models.CharField(max_length=200)
+    user_state = models.CharField(max_length=200)
     exam_start_datetime = models.DateTimeField()
     exam_end_datetime = models.DateTimeField()
     duration = models.IntegerField()
@@ -57,3 +68,10 @@ class Results(models.Model):
     correct_answers = models.IntegerField()
     wrong_answers = models.IntegerField()
     percentage = models.FloatField()
+
+class States(models.Model):
+    state_name = models.CharField(max_length=150)
+
+class Districts(models.Model):
+    state_name = models.ForeignKey(States, on_delete=models.CASCADE)
+    district_name = models.CharField(max_length=250)
