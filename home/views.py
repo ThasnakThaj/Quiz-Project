@@ -7,6 +7,7 @@ from django.contrib.auth import views as auth_views
 from django.http import JsonResponse
 from home import models
 from datetime import datetime
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -228,7 +229,7 @@ def index(request):
 
 def quiz_page(request):
   if 'shuffled_questions' not in request.session:
-    all_questions = list(models.Questions.objects.all())
+    all_questions = list(models.Questions.objects.filter(if_view =True))
     random.shuffle(all_questions)
     request.session['shuffled_questions'] = [question.pk for question in all_questions]
     request.session['current_question_index'] = 0
@@ -257,7 +258,11 @@ def quiz_page(request):
       
 
       selected_choice_id = request.POST.get('choice')
-      selected_choice = models.Choices.objects.get(pk=selected_choice_id)
+      if selected_choice_id is None:
+            selected_choice = models.Choices.objects.get(choice="no choice selected")
+      else:
+            selected_choice = models.Choices.objects.get(pk=selected_choice_id)
+
       correct_choice = question.choices.filter(is_answer=True).first()
 
       user_obj = models.User.objects.get(id=user_id)

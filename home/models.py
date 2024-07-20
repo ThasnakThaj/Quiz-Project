@@ -18,6 +18,7 @@ class User(models.Model):
 
 class Questions(models.Model):
     question = models.CharField(max_length=250)
+    if_view = models.BooleanField(default=True)
 
     def __str__(self):
         return self.question

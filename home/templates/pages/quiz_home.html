@@ -10,7 +10,7 @@
       <div class="col-lg-4 col-md-8 col-12 mx-auto">
         <div class="card z-index-0 fadeIn3 fadeInBottom" style="background-color: rgba(255, 255, 255, 0.9); /* Light overlay */">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="background-color: #8ED3F4 !important; /* Light blue color */">
-            <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="bg-gradient-warning shadow-primary border-radius-lg py-3 pe-1">
               <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Independence Day Quiz</h4>
             </div>
           </div>
@@ -40,11 +40,12 @@
               </div>
               <div class="col-md-12">
                 <div class="input-group input-group-outline my-3">
-                  {% comment %} <label class="form-label" for="type">Type</label> {% endcomment %}
-                  <select class="form-control" name="type" id="type" required>
-                    <label><option class="form-label" for="" disabled selected>You are</option></label>
+                  {% comment %} <label class="form-label">Type</label> {% endcomment %}
+                  <select class="form-control" name="type" required>
+                    <label class="form-label">
+                    <option value="" disabled selected>You are</option></label>
                     <option value="Architect">Architect</option>
-                    <option value="Carpenter">Carpender</option>
+                    <option value="Carpenter">Carpenter</option>
                     <option value="Dealer">Dealer</option>
                     <option value="Other">Other</option>
                   </select>
@@ -112,7 +113,7 @@
               </div>
               {% endif %}
               <div class="text-center">
-                <button type="submit" class="btn bg-gradient-primary w-100 my-4 mb-2" style="background-color: #8ED3F4 !important; /* Light blue color */">Join the Quiz</button>
+                <button type="submit" class="btn bg-gradient-warning w-100 my-4 mb-2" style="background-color: #8ED3F4 !important; /* Light blue color */">Join the Quiz</button>
               </div>
             </form>
           </div>

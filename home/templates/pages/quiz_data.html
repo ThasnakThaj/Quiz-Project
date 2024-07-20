@@ -3,7 +3,6 @@
 {% block title %} Trojan Quiz {% endblock title %}
 
 {% block content %}
-
 <div id="loading-spinner" class="loading-spinner" style="display: none;">
   <!-- Bootstrap spinner -->
   <div class="spinner-border text-primary" role="status">
@@ -18,24 +17,18 @@
       <div class="col-lg-10 col-md-8 col-12 mx-auto">
         <div class="card z-index-0 fadeIn3 fadeInBottom" style="background-color: rgba(255, 255, 255, 0.9); /* Light overlay */">
           <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2" style="background-color: #8ED3F4 !important; /* Light blue color */">
-            <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+            <div class="bg-gradient-warning shadow-primary border-radius-lg py-3 pe-1">
               <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Question {{ sequence_number }}</h4>
             </div>
           </div>
           <div class="card-body">
-            <form role="form" method="post" action="{% url 'quiz_page' %}" class="text-start">
+            <form id="quiz-form" role="form" method="post" action="{% url 'quiz_page' %}" class="text-start" onsubmit="confirmNextQuestion(event)">
               {% csrf_token %}
               <div class="col-md-12 mb-4">
                 <div class="input-group input-group-outline">
                   <label style = "line-height : 1.5" class="question-label">{{ question.question }}</label>
                 </div>
               </div>
-              <!-- Add space between question and choices -->
-              {% comment %} <div class="col-md-12 mb-6">
-                <div class="input-group input-group-outline">
-                  <label class="form-label choices-label">Choices</label>
-                </div>
-              </div> {% endcomment %}
               <div class="row mb-4">
                 {% for choice in choices %}
                 <div class="col-md-6 my-2">
@@ -47,7 +40,7 @@
                 {% endfor %}
               </div>
               <div class="text-center mt-4">
-                <button type="submit" class="btn bg-gradient-primary w-100" style="background-color: #8ED3F4 !important;">
+                <button type="submit" class="btn bg-gradient-warning w-100" style="background-color: #8ED3F4 !important;">
                   <span id="button-text">Next Question</span>
                   <span id="button-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                 </button>
@@ -59,14 +52,70 @@
     </div>
   </div>
 </div>
+<div id="custom-confirm-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>You haven't selected any choice. Do you want to proceed to the next question without answering?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="proceed-button">Proceed</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  {% comment %} function submitWithDelay() {
-    document.getElementById('button-text').style.display = 'none';
-    document.getElementById('button-spinner').style.display = 'inline-block';
-    setTimeout(function() {
+  function confirmNextQuestion(event) {
+    event.preventDefault();  // Prevent the default form submission
+
+    var choices = document.querySelectorAll('input[name="choice"]');
+    var choiceSelected = Array.from(choices).some(choice => choice.checked);
+
+    if (!choiceSelected) {
+      var modal = document.getElementById('custom-confirm-modal');
+      var proceedButton = document.getElementById('proceed-button');
+
+      // Show the modal
+      modal.style.display = "block";
+
+      // When the user clicks on <span> (x), close the modal
+      var closeButton = modal.querySelector('.close');
+      closeButton.onclick = function() {
+        modal.style.display = "none";
+      }
+
+      // When the user clicks on "Proceed", submit the form
+      proceedButton.onclick = function() {
+        modal.style.display = "none";
+        showSpinner();
+        document.getElementById('quiz-form').submit();
+      }
+
+      // When the user clicks on "Cancel", just close the modal
+      var cancelButton = modal.querySelector('.btn-secondary');
+      cancelButton.onclick = function() {
+        modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+    } else {
+      showSpinner();
       document.getElementById('quiz-form').submit();
-    }, 20000); // 5 seconds delay
-  } {% endcomment %}
+    }
+  }
   function showSpinner() {
     document.getElementById('button-text').style.display = 'none';
     document.getElementById('button-spinner').style.display = 'inline-block';
