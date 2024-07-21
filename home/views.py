@@ -59,6 +59,9 @@ def user_logout_view(request):
 
 # Pages
 def index(request):
+  bg_image = models.BgImage.objects.filter(type = 'Background').first()
+  bg_image_url = bg_image.image if bg_image else None
+  # print(bg_image_url)
   states = [
          "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
         "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
@@ -224,10 +227,13 @@ def index(request):
   return render(request, 'pages/quiz_home.html', {
                 'msg_alert': msg_alert,
                 'error_message': message, 'states': states,
-                'districts': districts,
+                'districts': districts, 'bg_image': bg_image_url,
             })
 
 def quiz_page(request):
+  bg_image = models.BgImage.objects.filter(type = 'Background').first()
+  bg_image_url = bg_image.image if bg_image else None
+  bg_image = models.BgImage.objects.filter(type = 'Background').first()
   if 'shuffled_questions' not in request.session:
     all_questions = list(models.Questions.objects.filter(if_view =True))
     random.shuffle(all_questions)
@@ -244,6 +250,7 @@ def quiz_page(request):
 
   current_question_id = shuffled_questions[current_question_index]
   question = models.Questions.objects.get(pk=current_question_id)
+  print(question)
   choices = question.choices.all()
 
   if request.method == 'POST':
@@ -262,6 +269,7 @@ def quiz_page(request):
             selected_choice = models.Choices.objects.get(choice="no choice selected")
       else:
             selected_choice = models.Choices.objects.get(pk=selected_choice_id)
+            print(selected_choice)
 
       correct_choice = question.choices.filter(is_answer=True).first()
 
@@ -297,7 +305,8 @@ def quiz_page(request):
       return redirect('quiz_page')  # Redirect to the same page to load the next question
 
   # Render the template with the current question and its choices
-  return render(request, 'pages/quiz_data.html', {'question': question, 'choices': choices, 'sequence_number': sequence_number})
+  return render(request, 'pages/quiz_data.html', {'bg_image': bg_image_url if bg_image else None, 
+                                                  'question': question, 'choices': choices, 'sequence_number': sequence_number})
 def quiz_page2(request):
   return render(request, 'pages/quiz_data2.html')
 

@@ -15,6 +15,10 @@ class User(models.Model):
 
     def __str__(self):
         return self.name
+    
+class BgImage(models.Model):
+    image = models.ImageField(upload_to='backgrounds/')
+    type = models.CharField(max_length=500)
 
 class Questions(models.Model):
     question = models.CharField(max_length=250)

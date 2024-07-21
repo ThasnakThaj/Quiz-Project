@@ -17,6 +17,11 @@ from str2bool import str2bool
 
 load_dotenv()  # take environment variables from .env.
 
+# Media files configuration
+MEDIA_URL = '/media/'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
