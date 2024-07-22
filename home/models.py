@@ -24,8 +24,8 @@ class Questions(models.Model):
     question = models.CharField(max_length=250)
     if_view = models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.question
+    # def __str__(self):
+    #     return self.question
 
 class Choices(models.Model):
     question = models.ForeignKey(

@@ -122,5 +122,117 @@
     </div>
   </div>
 </div>
-{% endblock content %}
 
+<!-- Modal HTML -->
+<div class="modal fade" id="instructionsModal" tabindex="-1" role="dialog" aria-labelledby="instructionsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="instructionsModalLabel">
+          Welcome to Trojen's Independence Day Quiz program!
+        </h5>
+        {% comment %} <p id="instructionsModalLabel">Before You Begin:</p> {% endcomment %}
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h6 class="modal-title w-100" id="instructionsModalSubTitle">
+          Before You Begin:
+        </h6>
+        <br>
+        <p>
+          1. Read Each Question Carefully:
+          <ul>
+            <li>Take your time to read each question thoroughly.</li>
+            <li>Ensure you understand the question before choosing an answer.</li>
+          </ul>
+        </p>
+        <p>
+          2. Choose the Best Answer:
+          <ul>
+            <li>Each question has multiple options. Select the option you believe is the best answer.</li>
+            <li>You may only select one answer per question.</li>
+            <li>You can skip a question without selecting an answer if you prefer.</li>
+          </ul>
+        </p>
+        <p>
+          3. Do Not Refresh or Navigate Away:
+          <ul>
+            <li>Refreshing the page or navigating away from the quiz may cause you to lose your progress.</li>
+            <li>Complete the quiz in one sitting to ensure your answers are submitted correctly.</li>
+          </ul>
+        </p>
+        <p>
+          4. Technical Issues:
+          <ul>
+            <li>If you encounter any technical issues, report them immediately to the quiz administrator.</li>
+            <li>Ensure you have a stable internet connection to avoid interruptions.</li>
+          </ul>
+        </p>
+        <br>
+        <h6 class="modal-title text-center" id="instructionsModalLabel">
+          Have fun and take the opportunity to test your knowledge.
+        </h6>
+        <h6 class="modal-title text-center" id="instructionsModalLabel">
+          Good luck!
+        </h6>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="confirmInstructions">Join</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Show the modal when the form is submitted
+    $('form').on('submit', function(e) {
+      e.preventDefault(); // Prevent form submission
+      $('#instructionsModal').modal('show'); // Show the modal
+    });
+
+    // Handle the OK button click
+    $('#confirmInstructions').on('click', function() {
+      $('#instructionsModal').modal('hide'); // Hide the modal
+      $('form').off('submit').submit(); // Allow form submission
+    });
+
+    // Function to update districts based on selected state
+    $('#state').change(function() {
+      var state = $(this).val();
+      var districts = {{ districts|safe }};
+      
+      // Clear previous options
+      $('#district').empty().append('<option value="" disabled selected>Select District</option>');
+      
+      // Add options for selected state
+      if (state && districts[state]) {
+        districts[state].forEach(function(district) {
+          $('#district').append('<option value="' + district + '">' + district + '</option>');
+        });
+      }
+    });
+
+    document.getElementById('phone').addEventListener('input', function (e) {
+        const input = e.target;
+        const value = input.value;
+        const feedback = input.nextElementSibling;
+        
+        if (value.length === 10) {
+            input.setCustomValidity('');
+            feedback.style.display = 'none';
+        } else {
+            input.setCustomValidity('Phone number must be exactly 10 digits.');
+            feedback.style.display = 'block';
+        }
+    });
+
+    document.getElementById('phone').addEventListener('invalid', function (e) {
+        e.target.setCustomValidity('Phone number must be exactly 10 digits.');
+    });
+  });
+</script>
+{% endblock content %}
