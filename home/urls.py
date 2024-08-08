@@ -5,8 +5,9 @@ from home import views
 
 urlpatterns = [
     # Pages
-    path('', views.index, name="index"),
-    path('quiz/', views.quiz_page, name='quiz_page'),
+    # path('', views.home_page, name="home_page"),
+    path('', views.quiz_page, name="quiz_page"),
+    # path('quiz/', views.quiz_page, name='quiz_page'),
     path('quiz/results/', views.quiz_results, name='quiz_results'),
     # path('contact-us/', views.contact_us, name='contact-us'),
     # path('about-us/', views.about_us, name='about-us'),

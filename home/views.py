@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from home import models
 from datetime import datetime
 from django.http import HttpResponse
+import csv
 
 # Create your views here.
 
@@ -55,6 +56,12 @@ class UserPasswordChangeView(auth_views.PasswordChangeView):
 def user_logout_view(request):
   logout(request)
   return redirect('/accounts/login/')
+
+ 
+def home_page(request):
+  bg_image = models.BgImage.objects.filter(type = 'BgHome').first()
+  bg_image_url = bg_image.image if bg_image else None
+  return render(request, 'pages/home_page.html', {'bg_image': bg_image_url,})
 
 
 # Pages
@@ -231,10 +238,13 @@ def index(request):
                   'districts': districts, 'bg_image': bg_image_url,
               })
   except Exception as e:
-    return redirect('quiz_page')
+    return redirect('index')
 
 def quiz_page(request):
   try:
+    user_id = request.session.get('User ID', 0)
+    # if user_id == 0:
+    #   return redirect('index')
     bg_image = models.BgImage.objects.filter(type = 'Background').first()
     bg_image_url = bg_image.image if bg_image else None
     bg_image = models.BgImage.objects.filter(type = 'Background').first()
@@ -277,9 +287,11 @@ def quiz_page(request):
 
         correct_choice = question.choices.filter(is_answer=True).first()
 
-        user_obj = models.User.objects.get(id=user_id)
+        # user_obj = models.User.objects.get(id=user_id)
+        user_obj = models.User.objects.first()
+        print("user:", user_obj)
         models.QuizzExam.objects.create(
-            user=user_obj, user_name=users_name, user_phone=users_phone,
+            user=user_obj, user_name=user_obj.name, user_phone=user_obj.phone_number,
             question_id=question.id, question_name=question.question,
             selected_choice=selected_choice.choice, correct_choice=correct_choice.choice,
             is_answer_correct=(selected_choice == correct_choice), choice_selected_time=datetime.now()
@@ -299,11 +311,10 @@ def quiz_page(request):
             total_questions_count = models.Questions.objects.count()
             percent = (correct_answers_count * 100) / total_questions_count
             models.Results.objects.create(
-                user=user_obj, user_name=users_name, ip_address = ip, user_phone=users_phone, user_company = users_company, 
-                user_type = users_type, user_district = users_district, user_state = users_state, no_of_questions_attended = answers_count,
+                user=user_obj, user_name=user_obj.name, ip_address = ip, user_phone=user_obj.phone_number, user_company = user_obj.company, 
+                user_type = user_obj.type, user_district = user_obj.district, user_state = user_obj.state, no_of_questions_attended = answers_count,
                 exam_start_datetime=exam_start_time, exam_end_datetime=end_time, duration=duration_in_minutes, 
                 correct_answers=correct_answers_count, wrong_answers=wrong_answers_count, percentage=percent)
-            request.session.flush()  # Clear the session data
             return redirect('quiz_results')  # Redirect to the results page
 
         return redirect('quiz_page')  # Redirect to the same page to load the next question
@@ -312,15 +323,19 @@ def quiz_page(request):
     return render(request, 'pages/quiz_data.html', {'bg_image': bg_image_url if bg_image else None, 
                                                     'question': question, 'choices': choices, 'sequence_number': sequence_number})
   except Exception as e:
-    return redirect('quiz_page')
+    return redirect('index')
   
 def quiz_page2(request):
   return render(request, 'pages/quiz_data2.html')
 
 def quiz_results(request):
+    user_id = request.session.get('User ID', 0)
+    # if user_id == 0:
+    #   return redirect('index')
+    
+    request.session.flush()  # Clear the session data
     # Logic to calculate and display results
     return render(request, 'pages/quiz_results.html')
-
 
 # Sections
 def presentation(request):

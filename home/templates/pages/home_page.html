@@ -1,0 +1,27 @@
+{% comment %} {% extends 'layouts/base_background.html' %}
+{% block content %}
+<div class="page-header align-items-start min-vh-100" style="background-image: url('{{ bg_image.url }}');" loading="lazy">
+    <!-- Remove the span with class="mask bg-gradient-dark opacity-6" if not needed -->
+    <div class="container my-auto">
+      <div class="row">
+        <!-- Your content here -->
+      </div>
+    </div>
+</div>
+{% endblock content %} {% endcomment %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="home-page">
+    <div class="bg-image" style="background-image: url('{{ bg_image.url }}');">
+        <!-- Your content here -->
+    </div>
+</body>
+</html>
