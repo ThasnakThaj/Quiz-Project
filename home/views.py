@@ -243,8 +243,8 @@ def index(request):
 def quiz_page(request):
   try:
     user_id = request.session.get('User ID', 0)
-    # if user_id == 0:
-    #   return redirect('index')
+    if user_id == 0:
+      return redirect('index')
     bg_image = models.BgImage.objects.filter(type = 'Background').first()
     bg_image_url = bg_image.image if bg_image else None
     bg_image = models.BgImage.objects.filter(type = 'Background').first()
@@ -287,11 +287,9 @@ def quiz_page(request):
 
         correct_choice = question.choices.filter(is_answer=True).first()
 
-        # user_obj = models.User.objects.get(id=user_id)
-        user_obj = models.User.objects.first()
-        print("user:", user_obj)
+        user_obj = models.User.objects.get(id=user_id)
         models.QuizzExam.objects.create(
-            user=user_obj, user_name=user_obj.name, user_phone=user_obj.phone_number,
+            user=user_obj, user_name=users_name, user_phone=users_phone,
             question_id=question.id, question_name=question.question,
             selected_choice=selected_choice.choice, correct_choice=correct_choice.choice,
             is_answer_correct=(selected_choice == correct_choice), choice_selected_time=datetime.now()
@@ -311,8 +309,8 @@ def quiz_page(request):
             total_questions_count = models.Questions.objects.count()
             percent = (correct_answers_count * 100) / total_questions_count
             models.Results.objects.create(
-                user=user_obj, user_name=user_obj.name, ip_address = ip, user_phone=user_obj.phone_number, user_company = user_obj.company, 
-                user_type = user_obj.type, user_district = user_obj.district, user_state = user_obj.state, no_of_questions_attended = answers_count,
+                user=user_obj, user_name=users_name, ip_address = ip, user_phone=users_phone, user_company = users_company, 
+                user_type = users_type, user_district = users_district, user_state = users_state, no_of_questions_attended = answers_count,
                 exam_start_datetime=exam_start_time, exam_end_datetime=end_time, duration=duration_in_minutes, 
                 correct_answers=correct_answers_count, wrong_answers=wrong_answers_count, percentage=percent)
             return redirect('quiz_results')  # Redirect to the results page
@@ -330,8 +328,8 @@ def quiz_page2(request):
 
 def quiz_results(request):
     user_id = request.session.get('User ID', 0)
-    # if user_id == 0:
-    #   return redirect('index')
+    if user_id == 0:
+      return redirect('index')
     
     request.session.flush()  # Clear the session data
     # Logic to calculate and display results
