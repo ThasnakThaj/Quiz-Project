@@ -10,6 +10,7 @@ class User(models.Model):
     type = models.CharField(max_length=50)
     district = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
+    medium = models.CharField(max_length=100)
     ip_address = models.CharField(max_length=50, blank=True, null=True)
 
 
@@ -22,6 +23,7 @@ class BgImage(models.Model):
 
 class Questions(models.Model):
     question = models.CharField(max_length=250)
+    medium = models.CharField(max_length=100)
     if_view = models.BooleanField(default=True)
 
     # def __str__(self):

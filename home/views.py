@@ -204,6 +204,7 @@ def index(request):
         type = request.POST.get('type')
         state = request.POST.get('state')
         district = request.POST.get('district')
+        medium = request.POST.get('medium')
         # print("comp: ", company)
         # print("type: ",type)
         # print("state: ", state)
@@ -216,19 +217,21 @@ def index(request):
         # print("home phone : ", user.phone_number)
         # print("home Id: ", user.id)
           user = models.User.objects.create(name=name, phone_number=phone, start_time=datetime.now(), 
-                                            company = company, type = type, district = district, state = state, ip_address = ip)
+                                            company = company, type = type, district = district, state = state, ip_address = ip , medium = medium)
           request.session['User ID'] = user.id
-          request.session['participant Name'] = user.name
-          request.session['participant Phone number'] = user.phone_number
-          request.session['participant company'] = user.company
-          request.session['participant type'] = user.type
-          request.session['participant district'] = user.district
-          request.session['participant state'] = user.state
+          request.session['medium'] = user.medium
+          # request.session['participant Name'] = user.name
+          # request.session['participant Phone number'] = user.phone_number
+          # request.session['participant company'] = user.company
+          # request.session['participant type'] = user.type
+          # request.session['participant district'] = user.district
+          # request.session['participant state'] = user.state
           # Optionally, you can log to a file
           # with open('log.txt', 'a') as f:
           #     f.write(f"Name: {name}, Phone: {phone}\n")
 
           # Return a JSON response (optional)
+          # request.session.pop('shuffled_questions', None) # delete session
           return redirect('quiz_page')
 
     # Render the initial form if GET request
@@ -243,13 +246,16 @@ def index(request):
 def quiz_page(request):
   try:
     user_id = request.session.get('User ID', 0)
+    medium = request.session.get('medium', "")
+    print('medium :' , medium )
     if user_id == 0:
       return redirect('index')
     bg_image = models.BgImage.objects.filter(type = 'Background').first()
     bg_image_url = bg_image.image if bg_image else None
     bg_image = models.BgImage.objects.filter(type = 'Background').first()
     if 'shuffled_questions' not in request.session:
-      all_questions = list(models.Questions.objects.filter(if_view =True))
+      all_questions = list(models.Questions.objects.filter(if_view =True , medium = medium))
+      print(all_questions)
       random.shuffle(all_questions)
       request.session['shuffled_questions'] = [question.pk for question in all_questions]
       request.session['current_question_index'] = 0
@@ -268,14 +274,15 @@ def quiz_page(request):
     choices = question.choices.all()
 
     if request.method == 'POST':
+        user_obj = models.User.objects.get(id=user_id)
         ip = get_client_ip(request)
-        user_id = request.session.get('User ID')
-        users_name = request.session.get('participant Name')
-        users_phone = request.session.get('participant Phone number')
-        users_company = request.session.get('participant company')
-        users_type = request.session.get('participant type')
-        users_district = request.session.get('participant district')
-        users_state = request.session.get('participant state')
+        user_id = user_obj.id#request.session.get('User ID')
+        users_name = user_obj.name # request.session.get('participant Name')
+        users_phone = user_obj.phone_number #request.session.get('participant Phone number')
+        users_company = user_obj.company #request.session.get('participant company')
+        users_type = user_obj.type #request.session.get('participant type')
+        users_district = user_obj.district #request.session.get('participant district')
+        users_state = user_obj.state #request.session.get('participant state')
         
 
         selected_choice_id = request.POST.get('choice')
@@ -287,7 +294,7 @@ def quiz_page(request):
 
         correct_choice = question.choices.filter(is_answer=True).first()
 
-        user_obj = models.User.objects.get(id=user_id)
+
         models.QuizzExam.objects.create(
             user=user_obj, user_name=users_name, user_phone=users_phone,
             question_id=question.id, question_name=question.question,
