@@ -49,7 +49,7 @@ class Exam(models.Model):
     exam_end_datetime = models.DateTimeField()
 
 class QuizzExam(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_name = models.CharField(max_length=200)
     user_phone = models.BigIntegerField()
     question_id = models.IntegerField()

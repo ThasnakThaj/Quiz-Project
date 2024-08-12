@@ -220,8 +220,8 @@ def index(request):
                                             company = company, type = type, district = district, state = state, ip_address = ip , medium = medium)
           request.session['User ID'] = user.id
           request.session['medium'] = user.medium
-          # request.session['participant Name'] = user.name
-          # request.session['participant Phone number'] = user.phone_number
+          request.session['User Name'] = user.name
+          request.session['User Phone'] = user.phone_number
           # request.session['participant company'] = user.company
           # request.session['participant type'] = user.type
           # request.session['participant district'] = user.district
@@ -246,13 +246,15 @@ def index(request):
 def quiz_page(request):
   try:
     user_id = request.session.get('User ID', 0)
+    user_name = request.session.get('User Name', "")
+    user_phone = request.session.get('User Phone', 0)
     medium = request.session.get('medium', "")
     print('medium :' , medium )
     if user_id == 0:
       return redirect('index')
     bg_image = models.BgImage.objects.filter(type = 'Background').first()
-    bg_image_url = bg_image.image if bg_image else None
-    bg_image = models.BgImage.objects.filter(type = 'Background').first()
+    bg_image_url =  bg_image.image if bg_image else None
+    # bg_image = models.BgImage.objects.filter(type = 'Background').first()
     if 'shuffled_questions' not in request.session:
       all_questions = list(models.Questions.objects.filter(if_view =True , medium = medium))
       print(all_questions)
@@ -274,29 +276,31 @@ def quiz_page(request):
     choices = question.choices.all()
 
     if request.method == 'POST':
-        user_obj = models.User.objects.get(id=user_id)
+        # user_obj = models.User.objects.get(id=user_id)
+        # user_obj = models.User.objects.first()
         ip = get_client_ip(request)
-        user_id = user_obj.id#request.session.get('User ID')
-        users_name = user_obj.name # request.session.get('participant Name')
-        users_phone = user_obj.phone_number #request.session.get('participant Phone number')
-        users_company = user_obj.company #request.session.get('participant company')
-        users_type = user_obj.type #request.session.get('participant type')
-        users_district = user_obj.district #request.session.get('participant district')
-        users_state = user_obj.state #request.session.get('participant state')
-        
+        # user_id = user_obj.id#request.session.get('User ID')
+        # users_name = user_obj.name # request.session.get('participant Name')
+        # users_phone = user_obj.phone_number #request.session.get('participant Phone number')
+        # users_company = user_obj.company #request.session.get('participant company')
+        # users_type = user_obj.type #request.session.get('participant type')
+        # users_district = user_obj.district #request.session.get('participant district')
+        # users_state = user_obj.state #request.session.get('participant state')
+        #
 
         selected_choice_id = request.POST.get('choice')
         if selected_choice_id is None:
               selected_choice = models.Choices.objects.get(choice="no choice selected")
         else:
               selected_choice = models.Choices.objects.get(pk=selected_choice_id)
-              print(selected_choice)
+              # print(selected_choice)
 
         correct_choice = question.choices.filter(is_answer=True).first()
 
 
         models.QuizzExam.objects.create(
-            user=user_obj, user_name=users_name, user_phone=users_phone,
+            # user=user_obj, user_name=user_obj.name, user_phone=user_obj.phone_number,
+            user_name= user_name, user_phone=user_phone,
             question_id=question.id, question_name=question.question,
             selected_choice=selected_choice.choice, correct_choice=correct_choice.choice,
             is_answer_correct=(selected_choice == correct_choice), choice_selected_time=datetime.now()
@@ -306,18 +310,20 @@ def quiz_page(request):
         request.session['sequence_number'] += 1
 
         if request.session['current_question_index'] >= len(shuffled_questions):
+            # user_obj = models.User.objects.first()
+            user_obj = models.User.objects.get(id=user_id)
             exam_start_time = user_obj.start_time.replace(tzinfo=None)  # Convert to naive datetime
             end_time = datetime.now().replace(tzinfo=None)
 
-            answers_count = models.QuizzExam.objects.filter(user=user_obj).count()
-            correct_answers_count = models.QuizzExam.objects.filter(user=user_obj, is_answer_correct=True).count()
-            wrong_answers_count = models.QuizzExam.objects.filter(user=user_obj, is_answer_correct=False).count()
+            answers_count = models.QuizzExam.objects.filter(user_phone=user_obj.phone_number).count()
+            correct_answers_count = models.QuizzExam.objects.filter(user_phone=user_obj.phone_number, is_answer_correct=True).count()
+            wrong_answers_count = models.QuizzExam.objects.filter(user_phone=user_obj.phone_number, is_answer_correct=False).count()
             duration_in_minutes = (end_time - exam_start_time).total_seconds()
             total_questions_count = models.Questions.objects.count()
             percent = (correct_answers_count * 100) / total_questions_count
             models.Results.objects.create(
-                user=user_obj, user_name=users_name, ip_address = ip, user_phone=users_phone, user_company = users_company, 
-                user_type = users_type, user_district = users_district, user_state = users_state, no_of_questions_attended = answers_count,
+                user=user_obj, user_name=user_obj.name, ip_address = ip, user_phone=user_obj.phone_number, user_company = user_obj.company,
+                user_type = user_obj.type, user_district = user_obj.district, user_state = user_obj.state, no_of_questions_attended = answers_count,
                 exam_start_datetime=exam_start_time, exam_end_datetime=end_time, duration=duration_in_minutes, 
                 correct_answers=correct_answers_count, wrong_answers=wrong_answers_count, percentage=percent)
             return redirect('quiz_results')  # Redirect to the results page

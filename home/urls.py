@@ -6,7 +6,7 @@ from home import views
 urlpatterns = [
     # Pages
     path('', views.home_page, name="home_page"),
-    path('index', views.index, name="index"),
+    path('quiz', views.index, name="index"),
     # path('quiz/', views.home_page, name='home_page'),
     path('quiz/', views.quiz_page, name='quiz_page'),
     path('quiz/results/', views.quiz_results, name='quiz_results'),

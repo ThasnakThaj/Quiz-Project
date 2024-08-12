@@ -34,8 +34,8 @@ if not SECRET_KEY:
     SECRET_KEY = ''.join(random.choice( string.ascii_lowercase  ) for i in range( 32 ))
 
 # Enable/Disable DEBUG Mode
-DEBUG = str2bool(os.environ.get('DEBUG'))
-#print(' DEBUG -> ' + str(DEBUG) ) 
+DEBUG = False
+#print(' DEBUG -> ' + str(DEBUG) )
 
 # Docker HOST
 ALLOWED_HOSTS = ['*']
@@ -44,7 +44,7 @@ ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://localhost:5085', 'http://127.0.0.1:8000', 'http://127.0.0.1:5085']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:    
+if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
@@ -106,23 +106,32 @@ DB_PORT     = os.getenv('DB_PORT'     , None)
 DB_NAME     = os.getenv('DB_NAME'     , None)
 
 if DB_ENGINE and DB_NAME and DB_USERNAME:
-    DATABASES = { 
+    DATABASES = {
       'default': {
-        'ENGINE'  : 'django.db.backends.' + DB_ENGINE, 
+        'ENGINE'  : 'django.db.backends.' + DB_ENGINE,
         'NAME'    : DB_NAME,
         'USER'    : DB_USERNAME,
         'PASSWORD': DB_PASS,
         'HOST'    : DB_HOST,
         'PORT'    : DB_PORT,
-        }, 
+        },
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'db.sqlite3',
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'pixamaze$QuizeAppDb', #'<your_username>$<your_database_name>',
+        'USER': 'pixamaze',
+        'PASSWORD': 'Admin@123',
+        'HOST': 'pixamaze.mysql.pythonanywhere-services.com' ,# '<your_mysql_hostname>',
         }
     }
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.sqlite3',
+    #         'NAME': 'db.sqlite3',
+    #     }
+    # }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

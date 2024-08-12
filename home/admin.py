@@ -21,7 +21,7 @@ class ChoicesAdmin(admin.ModelAdmin):
     list_display = ['question','choice', 'is_answer']
 
 class QuizzExamAdmin(admin.ModelAdmin):
-    list_display = ['user', 'user_name', 'user_phone', 'question_id', 'question_name', 'selected_choice', 'correct_choice', 
+    list_display = [ 'user_name', 'user_phone', 'question_id', 'question_name', 'selected_choice', 'correct_choice',
                     'is_answer_correct', 'choice_selected_time']
 
 def export_all_results(modeladmin, request, queryset):
